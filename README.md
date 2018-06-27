@@ -39,7 +39,7 @@ library(data.table)
 
 ``` r
 rm(list = ls())
-setwd('~/super_heroes')
+setwd('~/marvel_or_dc')
 
 hero_info = read.csv('heroes_information.csv') %>% 
   mutate(Publisher = factor(Publisher),
@@ -78,6 +78,13 @@ mycontrol = trainControl(method = 'cv',
                          classProbs = T,
                          summaryFunction = twoClassSummary,
                          verboseIter = TRUE)
+
+training_indices = createDataPartition(y = marvel_dc$Publisher,
+                                       p = .7,
+                                       list = FALSE)
+
+training = marvel_dc[training_indices,]
+testing = marvel_dc[-training_indices,]
 ```
 
 Generalized Linear Model
@@ -89,7 +96,7 @@ Ridge regression is the best performing model (alpha = 1) with a lambda value of
 
 ``` r
 glmnet_model = train(Publisher ~ .,
-                     marvel_dc %>% select(-name),
+                     training %>% select(-name),
                      method = 'glmnet',
                      trControl = mycontrol,
                      tuneGrid = expand.grid(alpha = 0:1, 
@@ -141,7 +148,7 @@ glmnet_model = train(Publisher ~ .,
     ## - Fold10: alpha=1, lambda=0.05 
     ## Aggregating results
     ## Selecting tuning parameters
-    ## Fitting alpha = 1, lambda = 0.03 on full training set
+    ## Fitting alpha = 1, lambda = 0.05 on full training set
 
 ``` r
 plot(glmnet_model)
@@ -154,45 +161,45 @@ Testing the Results of the Model
 
 Our model tends to err on the side of predicting a super hero to belong to Marvel comics over DC comics.
 
--   Sensitivity - 29% - percent of DC super heroes correctly predicted to be DC comics
+-   Sensitivity - 31% - percent of DC super heroes correctly predicted to be DC comics
 
--   Specificity - 96% - percent of Marvel super heroes correctly predicted to belong to Marvel Comics
+-   Specificity - 93% - percent of Marvel super heroes correctly predicted to belong to Marvel Comics
 
--   Pos Pred value - 82% - percent of predicted DC super heroes that actually belonged to DC
+-   Pos Pred value - 72% - percent of predicted DC super heroes that actually belonged to DC
 
 -   Neg Pred Value - 70% - percent of predicted marvel heroes that actually belonged to Marvel.
 
-If our model predicts that a given super hero belongs to DC comics, there's a pretty good likely hood that it is actually the case.
+Model often misclassifies heroes as belonging to the Marvel universe when they are DC. In the case where a hero is predicted to be a DC super hero, that is most often the case.
 
-If our model predicts that a super hero belongs to Marvel, there is a higher chance of misclassification error.
+This tells us that there are some super powers which are more exclusive to the DC universise whereas the ones mostly found in the Marvel universe can be found in DC's as well.
 
 ``` r
-confusionMatrix(predict(glmnet_model, marvel_dc), marvel_dc$Publisher)
+confusionMatrix(predict(glmnet_model, testing), testing$Publisher)
 ```
 
     ## Confusion Matrix and Statistics
     ## 
     ##           Reference
-    ## Prediction  dc marvel
-    ##     dc      69     12
-    ##     marvel 126    326
+    ## Prediction dc marvel
+    ##     dc      9      8
+    ##     marvel 49     93
     ##                                           
-    ##                Accuracy : 0.7411          
-    ##                  95% CI : (0.7017, 0.7778)
-    ##     No Information Rate : 0.6341          
-    ##     P-Value [Acc > NIR] : 9.479e-08       
+    ##                Accuracy : 0.6415          
+    ##                  95% CI : (0.5617, 0.7159)
+    ##     No Information Rate : 0.6352          
+    ##     P-Value [Acc > NIR] : 0.4701          
     ##                                           
-    ##                   Kappa : 0.3633          
-    ##  Mcnemar's Test P-Value : < 2.2e-16       
+    ##                   Kappa : 0.0894          
+    ##  Mcnemar's Test P-Value : 1.17e-07        
     ##                                           
-    ##             Sensitivity : 0.3538          
-    ##             Specificity : 0.9645          
-    ##          Pos Pred Value : 0.8519          
-    ##          Neg Pred Value : 0.7212          
-    ##              Prevalence : 0.3659          
-    ##          Detection Rate : 0.1295          
-    ##    Detection Prevalence : 0.1520          
-    ##       Balanced Accuracy : 0.6592          
+    ##             Sensitivity : 0.1552          
+    ##             Specificity : 0.9208          
+    ##          Pos Pred Value : 0.5294          
+    ##          Neg Pred Value : 0.6549          
+    ##              Prevalence : 0.3648          
+    ##          Detection Rate : 0.0566          
+    ##    Detection Prevalence : 0.1069          
+    ##       Balanced Accuracy : 0.5380          
     ##                                           
     ##        'Positive' Class : dc              
     ##
