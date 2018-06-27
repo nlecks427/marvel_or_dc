@@ -3,6 +3,7 @@ Marvel or DC
 
 Can we predict whether a given super hero belongs to the Marvel or DC universe based on their super powers?
 -----------------------------------------------------------------------------------------------------------
+<<<<<<< HEAD
 
 ``` r
 library(dplyr)
@@ -203,3 +204,5 @@ confusionMatrix(predict(glmnet_model, testing), testing$Publisher)
     ##                                           
     ##        'Positive' Class : dc              
     ##
+=======
+>>>>>>> 87223b8d050128adb3ed45b06bee4f704b3435ec
