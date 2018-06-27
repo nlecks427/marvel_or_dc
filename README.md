@@ -79,6 +79,7 @@ mycontrol = trainControl(method = 'cv',
                          summaryFunction = twoClassSummary,
                          verboseIter = TRUE)
 
+set.seed(11502)
 training_indices = createDataPartition(y = marvel_dc$Publisher,
                                        p = .7,
                                        list = FALSE)
@@ -148,7 +149,7 @@ glmnet_model = train(Publisher ~ .,
     ## - Fold10: alpha=1, lambda=0.05 
     ## Aggregating results
     ## Selecting tuning parameters
-    ## Fitting alpha = 1, lambda = 0.02 on full training set
+    ## Fitting alpha = 1, lambda = 0.05 on full training set
 
 ``` r
 plot(glmnet_model)
@@ -161,13 +162,13 @@ Testing the Results of the Model
 
 Our model tends to err on the side of predicting a super hero to belong to Marvel comics over DC comics.
 
--   Sensitivity - 31% - percent of DC super heroes correctly predicted to be DC comics
+-   Sensitivity - 18% - percent of DC super heroes correctly predicted to be DC comics
 
--   Specificity - 93% - percent of Marvel super heroes correctly predicted to belong to Marvel Comics
+-   Specificity - 97% - percent of Marvel super heroes correctly predicted to belong to Marvel Comics
 
--   Pos Pred value - 72% - percent of predicted DC super heroes that actually belonged to DC
+-   Pos Pred value - 78% - percent of predicted DC super heroes that actually belonged to DC
 
--   Neg Pred Value - 70% - percent of predicted marvel heroes that actually belonged to Marvel.
+-   Neg Pred Value - 67% - percent of predicted marvel heroes that actually belonged to Marvel.
 
 Model often misclassifies heroes as belonging to the Marvel universe when they are DC. In the case where a hero is predicted to be a DC super hero, that is most often the case.
 
@@ -181,25 +182,25 @@ confusionMatrix(predict(glmnet_model, testing), testing$Publisher)
     ## 
     ##           Reference
     ## Prediction dc marvel
-    ##     dc     21      7
-    ##     marvel 37     94
+    ##     dc     11      3
+    ##     marvel 47     98
     ##                                           
-    ##                Accuracy : 0.7233          
-    ##                  95% CI : (0.6468, 0.7912)
+    ##                Accuracy : 0.6855          
+    ##                  95% CI : (0.6072, 0.7568)
     ##     No Information Rate : 0.6352          
-    ##     P-Value [Acc > NIR] : 0.01191         
+    ##     P-Value [Acc > NIR] : 0.1075          
     ##                                           
-    ##                   Kappa : 0.329           
-    ##  Mcnemar's Test P-Value : 1.232e-05       
+    ##                   Kappa : 0.1908          
+    ##  Mcnemar's Test P-Value : 1.193e-09       
     ##                                           
-    ##             Sensitivity : 0.3621          
-    ##             Specificity : 0.9307          
-    ##          Pos Pred Value : 0.7500          
-    ##          Neg Pred Value : 0.7176          
-    ##              Prevalence : 0.3648          
-    ##          Detection Rate : 0.1321          
-    ##    Detection Prevalence : 0.1761          
-    ##       Balanced Accuracy : 0.6464          
+    ##             Sensitivity : 0.18966         
+    ##             Specificity : 0.97030         
+    ##          Pos Pred Value : 0.78571         
+    ##          Neg Pred Value : 0.67586         
+    ##              Prevalence : 0.36478         
+    ##          Detection Rate : 0.06918         
+    ##    Detection Prevalence : 0.08805         
+    ##       Balanced Accuracy : 0.57998         
     ##                                           
     ##        'Positive' Class : dc              
     ##

@@ -48,6 +48,7 @@ mycontrol = trainControl(method = 'cv',
                          summaryFunction = twoClassSummary,
                          verboseIter = TRUE)
 
+set.seed(11502)
 training_indices = createDataPartition(y = marvel_dc$Publisher,
                                        p = .7,
                                        list = FALSE)
@@ -76,13 +77,13 @@ plot(glmnet_model)
 
 Our model tends to err on the side of predicting a super hero to belong to Marvel comics over DC comics. 
 
-* Sensitivity - 31% - percent of DC super heroes correctly predicted to be DC comics
+* Sensitivity - 18% - percent of DC super heroes correctly predicted to be DC comics
 
-* Specificity - 93% - percent of Marvel super heroes correctly predicted to belong to Marvel Comics
+* Specificity - 97% - percent of Marvel super heroes correctly predicted to belong to Marvel Comics
 
-* Pos Pred value - 72% - percent of predicted DC super heroes  that actually belonged to DC
+* Pos Pred value - 78% - percent of predicted DC super heroes  that actually belonged to DC
 
-* Neg Pred Value - 70% - percent of predicted marvel heroes that actually belonged to Marvel. 
+* Neg Pred Value - 67% - percent of predicted marvel heroes that actually belonged to Marvel. 
 
 Model often misclassifies heroes as belonging to the Marvel universe when they are DC. In the case where a hero is predicted to be a DC super hero, that is most often the case.
 
